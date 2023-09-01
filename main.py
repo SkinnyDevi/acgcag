@@ -1,11 +1,20 @@
 import tkinter as tk
 
-window = tk.Tk()
+import core.ui.palette as palette
+import core.utils as utils
+from core.ui.main import mount_ui
 
-window.wm_title("ACGCAG")
+
+root = tk.Tk()
+palette.setup_font()
+
+root.wm_title("ACGCAG")
+utils.set_screen_geometry(root)
+
+main_frame = tk.Frame(bg=palette.MAIN_GRAY)
+mount_ui(main_frame)
+main_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 
 
-frame1 = tk.Frame(master=window, width=200, height=100, bg="#CCCCCC")
-frame1.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
-
-window.mainloop()
+if __name__ == "__main__":
+    root.mainloop()
