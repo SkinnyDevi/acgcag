@@ -2,11 +2,13 @@
 Constants for storing colours for the UI.
 """
 
-import tkinter.font as tkfont
-import pyglet
+import customtkinter as ctk
 from pathlib import Path
 
+WHITE = "#ffffff"
 MAIN_GRAY = "#1d1c21"
+BUTTON_BG_GRAY = "#495366"
+MAIN_BEIGE = "#ece5d8"
 BRIGHT_BEIGE = "#d3bc8f"
 DIM_BEIGE = "#b0a17d"
 
@@ -15,13 +17,14 @@ def setup_font():
     """
     Allows the use of the app font inside the program.
     """
+    path = Path("assets/app-font.ttf")
 
-    with open(Path("assets/app-font.ttf"), "rb") as font:
-        pyglet.font.add_file(font)
+    font = str(path.absolute())
+    ctk.FontManager.load_font(font)
 
 
 def APP_FONT(size: int):
     """
     Returns the app font with the specified size.
     """
-    return tkfont.Font(font=("HYWenHei", size, "normal"))
+    return ("HYWenHei-85W", size, "normal")

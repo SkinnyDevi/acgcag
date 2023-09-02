@@ -1,38 +1,36 @@
-import tkinter as tk
+import customtkinter as ctk
 
 import core.ui.palette as palette
 import core.ui.components as components
 
 
-def mount_ui(main_frame: tk.Tk):
+def mount_ui(main_frame: ctk.CTk):
     """
     Mounts the UI declared here.
     """
 
-    title_frame = tk.Frame(main_frame)
+    title_frame = ctk.CTkFrame(main_frame)
     title = components.frame_text(
         title_frame,
         "A Certain GUI for a Certain Anime Game",
-        18,
-        fg=palette.BRIGHT_BEIGE,
+        20,
+        color=palette.BRIGHT_BEIGE,
     )
     title.pack()
-    title_frame.pack(pady=15, padx=10, side=tk.TOP, anchor="w")
+    title_frame.pack(pady=15, padx=10, side=ctk.TOP, anchor="w")
 
-    subtitle_frame = tk.Frame(main_frame)
-    subtitle = components.frame_text(subtitle_frame, "Downloaded mods", 16)
-    subtitle.pack()
-    subtitle_frame.pack(pady=0, padx=10, side=tk.TOP, anchor="w")
-
-    mods_frame = tk.Frame(main_frame)
-
-    mod_frame = tk.Frame(mods_frame)
-    mod_title = components.frame_text(
-        mod_frame,
-        "Mod Title",
-        24,
+    app_tabs = ctk.CTkTabview(
+        main_frame,
+        segmented_button_fg_color=palette.MAIN_GRAY,
+        segmented_button_selected_color=palette.BRIGHT_BEIGE,
+        segmented_button_selected_hover_color=palette.DIM_BEIGE,
+        segmented_button_unselected_color=palette.DIM_BEIGE,
+        segmented_button_unselected_hover_color=palette.BRIGHT_BEIGE,
+        text_color=palette.WHITE,
     )
+    app_tabs._segmented_button.configure(font=palette.APP_FONT(16))
 
-    mod_title.pack()
-    mod_frame.pack()
-    mods_frame.pack(pady=20, padx=10, side=tk.TOP, anchor="w")
+    downloaded_tab = app_tabs.add("Downloaded Mods")
+    import_tab = app_tabs.add("Import Mods")
+
+    app_tabs.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)

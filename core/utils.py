@@ -1,7 +1,7 @@
-import tkinter as tk
+import customtkinter as ctk
 
 
-def set_screen_geometry(root: tk.Tk):
+def set_screen_geometry(root: ctk.CTk):
     size = get_screen_center(root)
 
     width, height = size[0] // 2, size[1] // 2
@@ -10,7 +10,7 @@ def set_screen_geometry(root: tk.Tk):
     root.geometry(f"{width}x{height}+{anchors[0]}+{anchors[1]}")
 
 
-def get_screen_center(root: tk.Tk):
+def get_screen_center(root: ctk.CTk):
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
 
