@@ -1,13 +1,14 @@
 import requests
 import threading
+import sys
 import customtkinter as ctk
 from typing import Callable
 from zipfile import ZipFile
 from pathlib import Path
-from observable import Observable
 
 import core.ui.palette as palette
 import core.ui.components as components
+from core.ui.custom_frame import ManagerPageFrame
 from core.config.config_manager import ConfigManager
 
 
@@ -35,28 +36,20 @@ class _DownloadField(ctk.CTkFrame):
         The download's title.
         """
 
-        title_frame = ctk.CTkFrame(self)
         title = (
             self.download_title if self.raw_title else f"Download {self.download_title}"
         )
-        self.title = components.frame_text(
-            title_frame,
-            title,
-            16,
-        )
-        self.title.pack()
-        title_frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
+        _, self.title = components.label_left_aligned(self, title, 16)
 
     def __progress_frame(self):
         """
         The download's progress bar.
         """
 
-        progress_frame = ctk.CTkFrame(self)
+        progress_frame = components.frame_left_aligned(self)
         self.progress_bar = ctk.CTkProgressBar(progress_frame, 500, 10)
         self.progress_bar.pack()
         self.progress_bar.set(0)
-        progress_frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
 
     def exec_download(self):
         """
@@ -94,12 +87,12 @@ class _DownloadField(ctk.CTkFrame):
         self.title.configure(text=title)
 
 
-class SetupPage(ctk.CTkFrame):
-    setup_finished = Observable()
-
+class SetupPage(ManagerPageFrame):
     def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
-        components.frame_text(self, "SETUP PAGE", 18).pack()
+        components.frame_text(
+            self, "PROGRAM SETUP INSTALLER", 19, color=palette.BRIGHT_BEIGE
+        ).pack(pady=30)
         self.page_pack()
 
         self.__setup_semaphore = threading.Semaphore()
@@ -111,6 +104,9 @@ class SetupPage(ctk.CTkFrame):
 
     def page_pack(self):
         self.pack(fill=ctk.BOTH, padx=10, pady=10)
+
+    def page_forget(self):
+        self.forget()
 
     def __setup_downloads(self, root: ctk.CTk):
         """
@@ -132,6 +128,13 @@ class SetupPage(ctk.CTkFrame):
 
         self.__processes["unzip_gimi"] = _DownloadField(
             self, root, "Extract GIMI", self.__extract_gimi, raw_title=True
+        )
+        self.__processes["create_mods_folder"] = _DownloadField(
+            self,
+            root,
+            "Create mods folder",
+            self.__create_custom_mods_folder,
+            raw_title=True,
         )
 
     def __start_setup_frame(self):
@@ -157,12 +160,12 @@ class SetupPage(ctk.CTkFrame):
         self.finish_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
         components.frame_text(
             self.finish_frame,
-            "Please open again the program after pressing 'Finish Setup'",
+            "Please open again the program after pressing 'Finish Setup'.",
             font_size=18,
         ).pack()
         components.frame_text(
             self.finish_frame,
-            "This only occurs on first program setup.",
+            "This only occurs on first program setup or if necessary files are missing.",
             font_size=18,
         ).pack()
 
@@ -172,7 +175,7 @@ class SetupPage(ctk.CTkFrame):
             command=self.__change_to_mainapp,
             font=palette.APP_FONT(14),
         )
-        finish_setup_btn.pack()
+        finish_setup_btn.pack(pady=20)
 
     def __start_setup(self):
         """
@@ -209,7 +212,7 @@ class SetupPage(ctk.CTkFrame):
         Cleanup to do when setup is finished.
         """
 
-        self.finish_frame.pack(fill=ctk.BOTH, expand=True)
+        self.finish_frame.pack(pady=20, fill=ctk.BOTH, expand=True)
         config = ConfigManager.setup()
         config.completed_setup()
 
@@ -218,16 +221,37 @@ class SetupPage(ctk.CTkFrame):
         Change the app to the main manager.
         """
 
-        SetupPage.setup_finished.trigger("finished", "ModManagerPage")
+        sys.exit(0)
+
+    def __gimi_exists(self):
+        """
+        Verifies GIMI exists.
+        """
+
+        return Path("3dmigoto").exists()
+
+    def __initialize_field(self, name: str, is_download=True):
+        """
+        Initializes a download or process field, waiting for it's visibility on screen.
+        """
+
+        handler = self.__downloads if is_download else self.__processes
+        proc = handler[name]
+        proc.pack()
+        proc.wait_visibility()
+
+        return proc
 
     def __download_gimi(self):
         """
         Downloads GIMI from GitHub.
         """
 
-        gimi_download = self.__downloads["gimi"]
-        gimi_download.pack()
-        gimi_download.wait_visibility()
+        gimi_download = self.__initialize_field("gimi")
+
+        if self.__gimi_exists():
+            gimi_download.complete()
+            return
 
         github_download_url = "https://github.com/SilentNightSound/GI-Model-Importer/releases/download/v7.0/3dmigoto-GIMI-for-playing-mods.zip"
         file_request = requests.get(github_download_url, stream=True)
@@ -248,9 +272,11 @@ class SetupPage(ctk.CTkFrame):
         Unzips the downloaded 3dmigoto file.
         """
 
-        unzip_proc = self.__processes["unzip_gimi"]
-        unzip_proc.pack()
-        unzip_proc.wait_visibility()
+        unzip_proc = self.__initialize_field("unzip_gimi", False)
+
+        if self.__gimi_exists():
+            unzip_proc.complete()
+            return
 
         path = Path("3dmigoto-GIMI-for-playing-mods.zip")
 
@@ -258,4 +284,21 @@ class SetupPage(ctk.CTkFrame):
             zip_file.extractall(".")
 
         path.unlink()
+
+        custom_mod_folder = Path("acgcag_mods")
+        if not custom_mod_folder.exists():
+            custom_mod_folder.mkdir()
+
         unzip_proc.complete()
+
+    def __create_custom_mods_folder(self):
+        """
+        Creates the manager's custom mod folder.
+        """
+        proc = self.__initialize_field("create_mods_folder", False)
+
+        custom_mod_folder = Path("acgcag_mods")
+        if not custom_mod_folder.exists():
+            custom_mod_folder.mkdir()
+
+        proc.complete()

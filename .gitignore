@@ -1,8 +1,12 @@
+# development
 .venv
 __pycache__
 tester.py
+
+# manager generated files and folder
 3dmigoto-GIMI-for-playing-mods.zip
 3dmigoto
 config/
+acgcag_mods
 
 !core/config

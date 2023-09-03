@@ -7,7 +7,9 @@ import core.ui.palette as palette
 
 class SideBar(ctk.CTkFrame):
     def __init__(self, root: ctk.CTk):
-        super().__init__(root, border_color=palette.BUTTON_BG_GRAY, border_width=2)
+        super().__init__(
+            root, border_color=palette.BUTTON_BG_GRAY, border_width=2, corner_radius=0
+        )
 
         download_icon = ctk.CTkImage(
             dark_image=Image.open(Path("assets/download-icon.png"))
@@ -37,5 +39,5 @@ class SideBar(ctk.CTkFrame):
         import_btn.place(x=10, y=100)
         import_btn.pack(padx=10, pady=10)
 
-    def pack_page(self):
+    def page_pack(self):
         self.pack(anchor="nw", fill=ctk.BOTH, side=ctk.LEFT)

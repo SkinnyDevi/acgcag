@@ -26,3 +26,22 @@ def frame_text(
 
     label._label.configure(justify=justify)
     return label
+
+
+def frame_left_aligned(parent: ctk.CTkFrame):
+    frame = ctk.CTkFrame(parent)
+    frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
+    return frame
+
+
+def label_left_aligned(parent: ctk.CTkFrame, title: str, font_size=18):
+    title_frame = ctk.CTkFrame(parent)
+    title_text = frame_text(
+        title_frame,
+        title,
+        font_size,
+    )
+    title_text.pack()
+    title_frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
+
+    return title_frame, title_text

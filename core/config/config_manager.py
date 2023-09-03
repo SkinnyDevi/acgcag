@@ -14,6 +14,10 @@ class ConfigManager:
     def has_run_setup(self):
         return self._has_run_setup
 
+    def rerun_setup(self):
+        self._has_run_setup = False
+        self.save()
+
     def completed_setup(self):
         self._has_run_setup = True
         self.save()
