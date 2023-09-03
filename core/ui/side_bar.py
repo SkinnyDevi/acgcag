@@ -37,5 +37,5 @@ class SideBar(ctk.CTkFrame):
         import_btn.place(x=10, y=100)
         import_btn.pack(padx=10, pady=10)
 
-    def pack(self):
+    def pack_page(self):
         self.pack(anchor="nw", fill=ctk.BOTH, side=ctk.LEFT)

@@ -6,7 +6,7 @@ from core.ui.palette import *
 def frame_text(
     frame: ctk.CTkFrame,
     text: str,
-    font_size: int = 25,
+    font_size: int = 15,
     *,
     color=DIM_BEIGE,
     background=MAIN_GRAY,

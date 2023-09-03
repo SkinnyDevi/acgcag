@@ -1,3 +1,5 @@
+import sys
+import os
 import customtkinter as ctk
 
 import core.ui.palette as palette
@@ -18,9 +20,9 @@ class MainApp:
         palette.setup_font()
         root.minsize(500, 200)
 
-        sidebar = SideBar(root)
+        self.sidebar = SideBar(root)
         if CONFIG.has_run_setup:
-            sidebar.pack()
+            self.sidebar.pack_page()
 
         container = ctk.CTkFrame(root, fg_color=palette.MAIN_GRAY)
         container.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
@@ -40,4 +42,25 @@ class MainApp:
             ModManagerPage.__name__: ModManagerPage(container),
         }
 
-        self.frames["ModManagerPage"].forget()
+        self.root = root
+        self.change_page("ModManagerPage" if CONFIG.has_run_setup else "SetupPage")
+
+        SetupPage.setup_finished.on("finished", lambda _: self.__exit_after_setup())
+
+    def change_page(self, page_name: str):
+        """
+        Change the page displayed in the app.
+        """
+
+        for page in self.frames.values():
+            page.forget()
+
+        if page_name not in self.frames.keys():
+            raise RuntimeError(f"No page in the app named '{page_name}'")
+
+        page = self.frames[page_name]
+        page.tkraise()
+        page.page_pack()
+
+    def __exit_after_setup(self):
+        sys.exit(0)

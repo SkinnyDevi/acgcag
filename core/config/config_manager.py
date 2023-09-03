@@ -14,6 +14,10 @@ class ConfigManager:
     def has_run_setup(self):
         return self._has_run_setup
 
+    def completed_setup(self):
+        self._has_run_setup = True
+        self.save()
+
     @staticmethod
     def setup():
         return ConfigManager.__instance or ConfigManager.__setup()

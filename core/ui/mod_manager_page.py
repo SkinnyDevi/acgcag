@@ -8,7 +8,7 @@ class ModManagerPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
         components.frame_text(self, "MOD MANAGER", 16).pack()
-        self.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
+        self.page_pack()
 
         app_tabs = ctk.CTkTabview(
             self,
@@ -25,3 +25,6 @@ class ModManagerPage(ctk.CTkFrame):
         import_tab = app_tabs.add("Import Mods")
 
         app_tabs.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
+
+    def page_pack(self):
+        self.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
