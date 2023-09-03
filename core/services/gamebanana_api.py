@@ -1,8 +1,13 @@
 import json
 import requests
-from urllib import parse
+import base64
+import tkinter as tk
+from urllib import parse, request
 from pathlib import Path
+from PIL import Image
 from observable import Observable
+
+from core.config.config_manager import ConfigManager
 
 ENDPOINT = "https://api.gamebanana.com/Core/Item/Data"
 
@@ -15,6 +20,10 @@ class GameBananaAPI:
     @staticmethod
     def mod_from_url(url: str):
         parsed_uri = parse.urlparse(url)
+
+        if parsed_uri.netloc != "gamebanana.com":
+            raise LookupError("The URL doesn't correspond with GameBanana")
+
         url_path = parsed_uri.path.split("/")
         del url_path[0]
         itemtype = url_path[0]
@@ -26,7 +35,7 @@ class GameBananaAPI:
         request_url = ENDPOINT + GameBananaAPI.__encode_params(
             itemid=itemid,
             itemtype="Mod",
-            fields="name,Game().name,Nsfw().bIsNsfw(),RootCategory().name,Category().name,Files().aFiles()",
+            fields="name,Game().name,Nsfw().bIsNsfw(),RootCategory().name,Category().name,Preview().sSubFeedImageUrl(),Files().aFiles()",
         )
         response = requests.get(request_url).json()
         return ModPost(itemid, response)
@@ -38,13 +47,13 @@ class GameBananaAPI:
 
 class ModPost:
     class Download:
-        def __init__(self, download: dict, mod_info: "ModPost"):
+        def __init__(self, download: dict, mod_info: dict):
             self._id: int = download["_idRow"]
             self._file_name: str = download["_sFile"]
             self._file_size: int = download["_nFilesize"]
             self._count: int = download["_nDownloadCount"]
             self._url: str = download["_sDownloadUrl"]
-            self._mod_info: ModPost = mod_info
+            self._mod_info: dict = mod_info
             self._dl_obs = Observable()
 
         @property
@@ -72,7 +81,7 @@ class ModPost:
             return self._dl_obs
 
         def download(self):
-            dl_path = Path(f"acgcag_mods/{self._mod_info.itemid}")
+            dl_path = Path(f"acgcag_mods/{self._mod_info['itemid']}")
             dl_path.mkdir()
 
             self.__download_mod_file(dl_path)
@@ -81,7 +90,7 @@ class ModPost:
         def __create_info_file(self, mod_path: Path):
             file_path = mod_path.joinpath(f"{self._file_name}.json")
 
-            data = self._mod_info.to_dict()
+            data = self._mod_info.copy()
             data["file_name"] = self._file_name
             data["download_count"] = self._count
             data["download_url"] = self._url
@@ -115,13 +124,14 @@ class ModPost:
         self._nsfw: bool = response[2]
         self._super_category: str = response[3]
         self._sub_category: str = response[4]
+        self._preview_image_url: str = response[5]
 
         self._downloads: list[self.Download] = []
 
-        if response[3] is not None:
+        mod_info = self.to_dict()
+        if len(response) > 6:
             self._downloads: list[self.Download] = [
-                ModPost.Download(d, self.__download_info())
-                for d in response[5].values()
+                ModPost.Download(d, mod_info) for d in response[6].values()
             ]
 
     @property
@@ -148,15 +158,22 @@ class ModPost:
     def character(self):
         return self._sub_category if self._super_category == "Skins" else None
 
-    def __download_info(self):
-        info = [
-            self._mod_name,
-            self._game,
-            self._nsfw,
-            self._super_category,
-            self._sub_category,
-        ]
-        return ModPost(self._itemid, info)
+    @property
+    def downloads(self):
+        return self._downloads
+
+    @property
+    def preview_image(self):
+        req = requests.get(self._preview_image_url)
+        extension = ".jpg" if ".jpg" in self._preview_image_url else ".png"
+
+        image_path = ConfigManager.mod_image_preview_path.joinpath(
+            self._itemid + extension
+        )
+        with open(image_path, "wb") as i:
+            i.write(req.content)
+
+        return Image.open(image_path)
 
     def to_dict(self):
         return {
@@ -164,4 +181,5 @@ class ModPost:
             "mod_name": self._mod_name,
             "nsfw": self._nsfw,
             "character": self.character,
+            "preview_image_url": self._preview_image_url,
         }

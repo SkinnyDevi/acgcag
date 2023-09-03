@@ -12,6 +12,7 @@ from core.ui.pages.main_manager_page import ModManagerPage
 class MainApp:
     def __init__(self, root: ctk.CTk):
         CONFIG = ConfigManager.setup()
+        CONFIG.clear_cached_previews()
 
         root.title("ACGCAG")
         utils.set_screen_geometry(root)

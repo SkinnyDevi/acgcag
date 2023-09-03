@@ -5,6 +5,7 @@ import customtkinter as ctk
 from zipfile import ZipFile
 from pathlib import Path
 
+import core.utils as utils
 import core.ui.palette as palette
 import core.ui.components.helpers as ui_helpers
 from core.ui.components.custom_frame import ManagerPageFrame
@@ -162,8 +163,7 @@ class SetupPage(ManagerPageFrame):
 
         handler = self.__downloads if is_download else self.__processes
         proc = handler[name]
-        proc.pack()
-        proc.wait_visibility()
+        utils.pack_and_wait(proc)
 
         return proc
 

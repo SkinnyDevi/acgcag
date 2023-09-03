@@ -37,3 +37,8 @@ def missing_files():
         return not (gimi_exists and custom_mods_exists)
     else:
         return True
+
+
+def pack_and_wait(component: ctk.CTkBaseClass, **kwargs):
+    component.pack(**kwargs)
+    component.wait_visibility()

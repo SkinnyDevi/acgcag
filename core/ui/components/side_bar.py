@@ -33,6 +33,7 @@ class SideBar(ManagerPageFrame):
         )
         downloads_btn.place(x=10, y=50)
         downloads_btn.pack(padx=10, pady=10)
+        downloads_btn.bind("<Button-1>", lambda x: self.focus())
 
         import_icon = ctk.CTkImage(dark_image=Image.open(Path("assets/banana.png")))
         import_btn = ctk.CTkButton(
@@ -47,6 +48,9 @@ class SideBar(ManagerPageFrame):
         )
         import_btn.place(x=10, y=100)
         import_btn.pack(padx=10, pady=10)
+        import_btn.bind("<Button-1>", lambda x: self.focus())
+
+        self.bind("<Button-1>", lambda x: self.focus())
 
     def page_pack(self):
         self.pack(anchor="nw", fill=ctk.BOTH, side=ctk.LEFT)

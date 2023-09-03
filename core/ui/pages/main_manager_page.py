@@ -29,6 +29,7 @@ class ModManagerPage(ManagerPageFrame):
         self.change_page("DownloadedModsPage")
 
         SideBar.page_change_event.on("page_change", lambda p: self.change_page(p))
+        self.bind("<Button-1>", lambda x: self.focus())
 
     def page_pack(self):
         self.sidebar.page_pack()
