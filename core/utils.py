@@ -1,4 +1,3 @@
-import shutil
 import customtkinter as ctk
 from pathlib import Path
 

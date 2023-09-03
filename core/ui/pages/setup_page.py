@@ -7,8 +7,8 @@ from zipfile import ZipFile
 from pathlib import Path
 
 import core.ui.palette as palette
-import core.ui.components as components
-from core.ui.custom_frame import ManagerPageFrame
+import core.ui.components.helpers as ui_helpers
+from core.ui.components.custom_frame import ManagerPageFrame
 from core.config.config_manager import ConfigManager
 
 
@@ -39,14 +39,14 @@ class _DownloadField(ctk.CTkFrame):
         title = (
             self.download_title if self.raw_title else f"Download {self.download_title}"
         )
-        _, self.title = components.label_left_aligned(self, title, 16)
+        _, self.title = ui_helpers.label_left_aligned(self, title, 16)
 
     def __progress_frame(self):
         """
         The download's progress bar.
         """
 
-        progress_frame = components.frame_left_aligned(self)
+        progress_frame = ui_helpers.frame_left_aligned(self)
         self.progress_bar = ctk.CTkProgressBar(progress_frame, 500, 10)
         self.progress_bar.pack()
         self.progress_bar.set(0)
@@ -90,7 +90,7 @@ class _DownloadField(ctk.CTkFrame):
 class SetupPage(ManagerPageFrame):
     def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
-        components.frame_text(
+        ui_helpers.frame_text(
             self, "PROGRAM SETUP INSTALLER", 19, color=palette.BRIGHT_BEIGE
         ).pack(pady=30)
         self.page_pack()
@@ -158,12 +158,12 @@ class SetupPage(ManagerPageFrame):
         """
 
         self.finish_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
-        components.frame_text(
+        ui_helpers.frame_text(
             self.finish_frame,
             "Please open again the program after pressing 'Finish Setup'.",
             font_size=18,
         ).pack()
-        components.frame_text(
+        ui_helpers.frame_text(
             self.finish_frame,
             "This only occurs on first program setup or if necessary files are missing.",
             font_size=18,

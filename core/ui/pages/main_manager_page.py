@@ -1,9 +1,10 @@
 import customtkinter as ctk
 
 import core.ui.palette as palette
-import core.ui.components as components
-from core.ui.custom_frame import ManagerPageFrame
-from core.ui.side_bar import SideBar
+from core.ui.components.custom_frame import ManagerPageFrame
+from core.ui.components.side_bar import SideBar
+
+from core.ui.pages.downloaded_page import DownloadedModsPage
 
 
 class ModManagerPage(ManagerPageFrame):
@@ -11,10 +12,13 @@ class ModManagerPage(ManagerPageFrame):
         super().__init__(parent, fg_color=palette.MAIN_GRAY, corner_radius=0)
 
         self.sidebar = SideBar(parent)
-        components.frame_text(self, "MOD MANAGER", 16).pack()
         self.page_pack()
 
         self.frames: dict[str, ctk.CTkFrame] = {}
+
+        self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
+
+        self.change_page("DownloadedModsPage")
 
     def page_pack(self):
         self.sidebar.page_pack()

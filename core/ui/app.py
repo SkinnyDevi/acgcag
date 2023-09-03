@@ -1,14 +1,12 @@
-import sys
-import os
 import customtkinter as ctk
 
 import core.ui.palette as palette
-import core.ui.components as components
+import core.ui.components.helpers as ui_helpers
 import core.utils as utils
 from core.config.config_manager import ConfigManager
-from core.ui.custom_frame import ManagerPageFrame
-from core.ui.setup_page import SetupPage
-from core.ui.mod_manager_page import ModManagerPage
+from core.ui.components.custom_frame import ManagerPageFrame
+from core.ui.pages.setup_page import SetupPage
+from core.ui.pages.main_manager_page import ModManagerPage
 
 
 class MainApp:
@@ -23,16 +21,24 @@ class MainApp:
         if utils.missing_files():
             CONFIG.rerun_setup()
 
-        container = ctk.CTkFrame(root, fg_color=palette.BRIGHT_BEIGE)
+        container = ctk.CTkFrame(
+            root,
+            fg_color=palette.BRIGHT_BEIGE
+            if CONFIG.has_run_setup
+            else palette.MAIN_GRAY,
+            corner_radius=0,
+        )
         container.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
 
         title_frame = ctk.CTkFrame(container, corner_radius=0)
-        title = components.frame_text(
+        title = ui_helpers.frame_text(
             title_frame,
             "A Certain GUI for a Certain Anime Game",
             20,
-            color=palette.MAIN_GRAY,
-            background=palette.BRIGHT_BEIGE,
+            color=palette.MAIN_GRAY if CONFIG.has_run_setup else palette.BRIGHT_BEIGE,
+            background=palette.BRIGHT_BEIGE
+            if CONFIG.has_run_setup
+            else palette.MAIN_GRAY,
         )
         title.pack()
         title_frame.pack(pady=15, padx=10, side=ctk.TOP, anchor="w")
