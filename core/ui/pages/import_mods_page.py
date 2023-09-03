@@ -5,12 +5,12 @@ import core.ui.components.helpers as ui_helpers
 from core.ui.components.custom_frame import ManagerPageFrame
 
 
-class DownloadedModsPage(ManagerPageFrame):
+class ImportModsPage(ManagerPageFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
 
         title = ui_helpers.frame_text(
-            self, "DOWNLOADED MODS", 18, color=palette.BRIGHT_BEIGE
+            self, "IMPORT MODS FROM GAMEBANANA", 18, color=palette.BRIGHT_BEIGE
         )
         title.pack(pady=10)
 
