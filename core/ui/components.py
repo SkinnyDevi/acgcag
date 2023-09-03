@@ -14,13 +14,15 @@ def frame_text(
     justify="left",
     **kwargs
 ):
-    return ctk.CTkLabel(
+    label = ctk.CTkLabel(
         frame,
         text=text,
         font=APP_FONT(font_size),
         text_color=color,
         bg_color=background,
         anchor=anchor,
-        compound=justify,
-        **kwargs
+        **kwargs,
     )
+
+    label._label.configure(justify=justify)
+    return label
