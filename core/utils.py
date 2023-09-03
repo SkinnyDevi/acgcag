@@ -19,7 +19,7 @@ def set_screen_geometry(root: ctk.CTk):
     width, height = get_window_size(screen_width, screen_height)
     anchors = width // 2, height // 2
 
-    root.geometry(f"{width}x{height}+{anchors[0]}+{anchors[1]}")
+    root.geometry(f"{width+100}x{height+100}+{anchors[0]-65}+{anchors[1]-65}")
 
 
 def directory_is_empty(directory: Path) -> bool:

@@ -1,3 +1,4 @@
+import threading
 import customtkinter as ctk
 
 import core.utils as utils
@@ -10,6 +11,7 @@ from core.services.gamebanana_api import GameBananaAPI, ModPost
 class ImportModsPage(ManagerPageFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
+        self.__search_thread = None
 
         title = ui_helpers.frame_text(
             self, "IMPORT MODS FROM GAMEBANANA", 20, color=palette.BRIGHT_BEIGE
@@ -21,7 +23,7 @@ class ImportModsPage(ManagerPageFrame):
 
         self.__entry_label(container)
         self.__entry_frame(container)
-        self.__search_btn(container)
+        self.__search_btn_frame(container)
         self.__mod_info()
 
         self.bind("<Button-1>", lambda x: self.focus())
@@ -46,32 +48,46 @@ class ImportModsPage(ManagerPageFrame):
         )
         self.__entry.pack()
 
-    def __search_btn(self, frame: ctk.CTkFrame):
+    def __search_btn_frame(self, frame: ctk.CTkFrame):
         search_mod_frame = ui_helpers.frame_left_aligned(frame)
-        search_btn = ctk.CTkButton(
+        self.__search_btn = ctk.CTkButton(
             search_mod_frame,
             text="Search",
             fg_color=palette.BUTTON_BG_GRAY,
             text_color=palette.WHITE,
             font=palette.APP_FONT(16),
-            command=self.__search,
+            command=self.__start_search,
         )
-        search_btn.pack()
-        search_btn.bind("<Button-1>", lambda x: self.focus())
+        self.__search_btn.pack()
+        self.__search_btn.bind("<Button-1>", lambda x: self.focus())
 
     def __mod_info(self):
         self.__mod_info_frame = UIModInfoFrame(self)
 
+    def __start_search(self):
+        if self.__search_thread:
+            return
+
+        self.__search_thread = threading.Thread(target=self.__search)
+        self.__search_thread.start()
+
     def __search(self):
         self.__mod_info_frame.page_forget()
+        self.__search_btn.configure(state="disabled", text="Loading...")
 
         url = self.__entry.get().strip()
         if url == "":
-            return
+            return self.__search_cleanup()
 
         mod = GameBananaAPI.mod_from_url(url)
         self.__mod_info_frame.set_mod(mod)
         self.__mod_info_frame.page_pack()
+
+        self.__search_cleanup()
+
+    def __search_cleanup(self):
+        self.__search_thread = None
+        self.__search_btn.configure(state="normal", text="Search")
 
 
 class UIModInfoFrame(ctk.CTkFrame):
