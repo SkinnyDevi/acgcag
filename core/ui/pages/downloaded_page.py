@@ -10,7 +10,7 @@ class DownloadedModsPage(ManagerPageFrame):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
 
         title = ui_helpers.frame_text(
-            self, "DOWNLOADED MODS", 18, color=palette.BRIGHT_BEIGE
+            self, "DOWNLOADED MODS", 20, color=palette.BRIGHT_BEIGE
         )
         title.pack(pady=10)
 

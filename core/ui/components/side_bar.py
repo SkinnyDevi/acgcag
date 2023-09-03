@@ -14,7 +14,7 @@ class SideBar(ManagerPageFrame):
         super().__init__(
             root,
             fg_color=palette.MAIN_GRAY,
-            border_color=palette.BRIGHT_BEIGE,
+            border_color=palette.MAIN_BEIGE,
             border_width=2,
         )
 

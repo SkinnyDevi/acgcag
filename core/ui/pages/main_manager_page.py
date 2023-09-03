@@ -10,7 +10,12 @@ from core.ui.pages.import_mods_page import ImportModsPage
 
 class ModManagerPage(ManagerPageFrame):
     def __init__(self, parent: ctk.CTkFrame):
-        super().__init__(parent, fg_color=palette.MAIN_GRAY)
+        super().__init__(
+            parent,
+            fg_color=palette.MAIN_GRAY,
+            border_color=palette.MAIN_BEIGE,
+            border_width=2,
+        )
 
         self.sidebar = SideBar(parent)
         self.page_pack()

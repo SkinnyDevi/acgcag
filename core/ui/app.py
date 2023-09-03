@@ -16,16 +16,14 @@ class MainApp:
         root.title("ACGCAG")
         utils.set_screen_geometry(root)
         palette.setup_font()
-        root.minsize(500, 200)
+        root.minsize(800, 400)
 
         if utils.missing_files():
             CONFIG.rerun_setup()
 
         container = ctk.CTkFrame(
             root,
-            fg_color=palette.BRIGHT_BEIGE
-            if CONFIG.has_run_setup
-            else palette.MAIN_GRAY,
+            fg_color=palette.MAIN_BEIGE if CONFIG.has_run_setup else palette.MAIN_GRAY,
             corner_radius=0,
         )
         container.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=True)
@@ -34,9 +32,9 @@ class MainApp:
         title = ui_helpers.frame_text(
             title_frame,
             "A Certain GUI for a Certain Anime Game",
-            20,
+            25,
             color=palette.MAIN_GRAY if CONFIG.has_run_setup else palette.BRIGHT_BEIGE,
-            background=palette.BRIGHT_BEIGE
+            background=palette.MAIN_BEIGE
             if CONFIG.has_run_setup
             else palette.MAIN_GRAY,
         )
