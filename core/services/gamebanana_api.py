@@ -87,6 +87,7 @@ class ModPost:
 
             self.__download_mod_file(dl_path)
             self.__create_info_file(dl_path)
+            ModPost.Download._download_preview_image(self._mod_info, dl_path)
             self._dl_obs.trigger("mod_dl_complete", True)
 
         def __create_info_file(self, mod_path: Path):
@@ -112,6 +113,18 @@ class ModPost:
                     chunks += chunk_size
                     self._dl_obs.trigger("mod_chunk_update", chunks / self._file_size)
                     mod.write(chunk)
+
+        @staticmethod
+        def _download_preview_image(mod_info: dict, folder: Path):
+            img = mod_info["preview_image_url"]
+            req = requests.get(img)
+            extension = ".jpg" if ".jpg" in img else ".png"
+
+            image_path = folder.joinpath(mod_info["itemid"] + extension)
+            with open(image_path, "wb") as i:
+                i.write(req.content)
+
+            return image_path
 
     def __init__(self, itemid: str, response: list):
         self._itemid: str = itemid
@@ -164,15 +177,9 @@ class ModPost:
 
     @property
     def preview_image(self):
-        req = requests.get(self._preview_image_url)
-        extension = ".jpg" if ".jpg" in self._preview_image_url else ".png"
-
-        image_path = ConfigManager.mod_image_preview_path.joinpath(
-            self._itemid + extension
+        image_path = self.Download._download_preview_image(
+            self.to_dict(), ConfigManager.mod_image_preview_path
         )
-        with open(image_path, "wb") as i:
-            i.write(req.content)
-
         return Image.open(image_path)
 
     def to_dict(self):
