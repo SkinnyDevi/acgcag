@@ -1,8 +1,9 @@
 import customtkinter as ctk
 
+import core.utils as utils
 import core.ui.palette as palette
 import core.ui.components.helpers as ui_helpers
-import core.utils as utils
+
 from core.config.config_manager import ConfigManager
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.pages.setup_page import SetupPage
@@ -17,7 +18,7 @@ class MainApp:
         root.title("ACGCAG")
         utils.set_screen_geometry(root)
         palette.setup_font()
-        root.minsize(800, 400)
+        root.resizable(False, False)
 
         if utils.missing_files():
             CONFIG.rerun_setup()

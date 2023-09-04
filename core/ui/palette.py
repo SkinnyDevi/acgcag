@@ -7,6 +7,7 @@ from pathlib import Path
 
 WHITE = "#ffffff"
 MAIN_GRAY = "#1d1c21"
+LESSER_GRAY = "#312f37"
 BUTTON_BG_GRAY = "#495366"
 MAIN_BEIGE = "#ece5d8"
 BRIGHT_BEIGE = "#d3bc8f"

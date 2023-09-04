@@ -4,6 +4,7 @@ from pathlib import Path
 from observable import Observable
 
 import core.ui.palette as palette
+
 from core.ui.components.custom_frame import ManagerPageFrame
 
 

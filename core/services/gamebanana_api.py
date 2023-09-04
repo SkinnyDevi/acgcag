@@ -1,13 +1,14 @@
 import json
 import shutil
 import requests
+from PIL import Image
 from urllib import parse
 from pathlib import Path
-from PIL import Image
 from observable import Observable
 
 from core.config.config_manager import ConfigManager
 
+MAIN_SITE = "https://gamebanana.com"
 ENDPOINT = "https://api.gamebanana.com/Core/Item/Data"
 
 
@@ -91,7 +92,7 @@ class ModPost:
             self._dl_obs.trigger("mod_dl_complete", True)
 
         def __create_info_file(self, mod_path: Path):
-            file_path = mod_path.joinpath(f"{self._file_name}.json")
+            file_path = mod_path.joinpath(f"{self._mod_info['itemid']}.json")
 
             data = self._mod_info.copy()
             data["file_name"] = self._file_name
@@ -118,9 +119,8 @@ class ModPost:
         def _download_preview_image(mod_info: dict, folder: Path):
             img = mod_info["preview_image_url"]
             req = requests.get(img)
-            extension = ".jpg" if ".jpg" in img else ".png"
 
-            image_path = folder.joinpath(mod_info["itemid"] + extension)
+            image_path = folder.joinpath(mod_info["local_preview_file"])
             with open(image_path, "wb") as i:
                 i.write(req.content)
 
@@ -182,6 +182,10 @@ class ModPost:
         )
         return Image.open(image_path)
 
+    @property
+    def preview_extension(self):
+        return ".jpg" if ".jpg" in self._preview_image_url else ".png"
+
     def to_dict(self):
         return {
             "itemid": self._itemid,
@@ -189,4 +193,5 @@ class ModPost:
             "nsfw": self._nsfw,
             "character": self.character,
             "preview_image_url": self._preview_image_url,
+            "local_preview_file": self._itemid + self.preview_extension,
         }

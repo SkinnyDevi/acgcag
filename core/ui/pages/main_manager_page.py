@@ -1,9 +1,9 @@
 import customtkinter as ctk
 
 import core.ui.palette as palette
+
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.side_bar import SideBar
-
 from core.ui.pages.downloaded_page import DownloadedModsPage
 from core.ui.pages.import_mods_page import ImportModsPage
 
@@ -27,7 +27,7 @@ class ModManagerPage(ManagerPageFrame):
         self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
         self.frames[ImportModsPage.__name__] = ImportModsPage(self, self.app_root)
 
-        self.change_page("DownloadedModsPage")
+        self.change_page("DownloadedModsPage", False)
 
         SideBar.page_change_event.on("page_change", lambda p: self.change_page(p))
         self.bind("<Button-1>", lambda x: self.focus())
@@ -40,7 +40,7 @@ class ModManagerPage(ManagerPageFrame):
         self.sidebar.forget()
         self.forget()
 
-    def change_page(self, page_name: str):
+    def change_page(self, page_name: str, wait=True):
         """
         Change the page displayed in the app.
         """
@@ -56,5 +56,4 @@ class ModManagerPage(ManagerPageFrame):
 
         page = self.frames[page_name]
         self.current_frame = page_name
-        page.tkraise()
         page.page_pack()

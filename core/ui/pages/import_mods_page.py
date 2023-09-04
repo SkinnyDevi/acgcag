@@ -4,9 +4,10 @@ import customtkinter as ctk
 import core.utils as utils
 import core.ui.palette as palette
 import core.ui.components.helpers as ui_helpers
+
+from core.services.gamebanana_api import GameBananaAPI, ModPost
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.download_field import DownloadField
-from core.services.gamebanana_api import GameBananaAPI, ModPost
 
 
 class ImportModsPage(ManagerPageFrame):
@@ -123,19 +124,9 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
         self.__finish_btn.forget()
 
     def set_mod(self, mod: ModPost):
-        def pairwise(iterable):
-            "s -> (s0, s1), (s2, s3), (s4, s5), ..."
-            a = iter(iterable)
-            return zip(a, a)
-
         downloads = mod.downloads
-        for dl1, dl2 in pairwise(downloads):
+        for dl1, dl2 in utils.pairwise(downloads):
             frame = self.__pack_download(dl1, dl2)
-            self.__fields.append(frame)
-
-        odd_dls = len(downloads) % 2 != 0
-        if odd_dls:
-            frame = self.__pack_download(downloads[-1])
             self.__fields.append(frame)
 
     def destroy_frames(self):

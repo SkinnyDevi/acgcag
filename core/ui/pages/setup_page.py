@@ -8,9 +8,10 @@ from pathlib import Path
 import core.utils as utils
 import core.ui.palette as palette
 import core.ui.components.helpers as ui_helpers
+
+from core.config.config_manager import ConfigManager
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.download_field import DownloadField
-from core.config.config_manager import ConfigManager
 
 
 class SetupPage(ManagerPageFrame):
