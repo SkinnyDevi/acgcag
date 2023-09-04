@@ -44,7 +44,7 @@ class MainApp:
 
         self.frames: list[ManagerPageFrame] = [
             SetupPage(container, root),
-            ModManagerPage(container),
+            ModManagerPage(container, root),
         ]
 
         self.frames[0 if CONFIG.has_run_setup else 1].page_forget()

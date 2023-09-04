@@ -1,4 +1,3 @@
-import contextlib
 import threading
 import customtkinter as ctk
 
@@ -11,9 +10,10 @@ from core.services.gamebanana_api import GameBananaAPI, ModPost
 
 
 class ImportModsPage(ManagerPageFrame):
-    def __init__(self, parent):
+    def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
         self.__search_thread = None
+        self.app_root = root
 
         title = ui_helpers.frame_text(
             self, "IMPORT MODS FROM GAMEBANANA", 20, color=palette.BRIGHT_BEIGE
@@ -66,7 +66,7 @@ class ImportModsPage(ManagerPageFrame):
 
     def __mod_info(self):
         self.__mod_info_frame = UIModInfoFrame(self)
-        self.__download_opts_frame = UIDownloadOptionsFrame(self)
+        self.__download_opts_frame = UIDownloadOptionsFrame(self, self.app_root)
 
     def __start_search(self):
         if self.__search_thread:
@@ -103,23 +103,24 @@ class ImportModsPage(ManagerPageFrame):
 
 
 class UIDownloadOptionsFrame(ctk.CTkFrame):
-    def __init__(self, parent: ctk.CTkFrame):
+    def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
+        self.root = root
 
         ui_helpers.frame_text(self, "Available Downloads", 16).pack()
+
         self.__finish()
 
         self.__fields: list[ctk.CTkFrame] = []
 
     def page_pack(self):
-        self.__finish_btn.pack()
+        self.__finish_btn.pack(pady=5)
         self.pack(pady=10)
 
     def page_forget(self):
+        self.destroy_frames()
         self.forget()
         self.__finish_btn.forget()
-        with contextlib.suppress(Exception):
-            self.destroy_frames()
 
     def set_mod(self, mod: ModPost):
         def pairwise(iterable):
@@ -170,9 +171,32 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
             hover_color=palette.DIM_BEIGE,
             text_color=palette.WHITE,
             font=palette.APP_FONT(16),
-            command=lambda: print("Download", dl.file_name),
         )
         download_btn.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
+        download_btn.configure(command=lambda: self.__start_download(dl))
+
+    def __start_download(self, download: ModPost.Download):
+        thread = threading.Thread(target=self.__download_file, args=[download])
+        thread.start()
+
+    def __download_file(self, download: ModPost.Download):
+        dl_bar = DownloadField(self, self.root, download.file_name, download.download)
+        download.dl_obs.on("mod_chunk_update", dl_bar.update_progress)
+        download.dl_obs.on("mod_dl_complete", lambda x: dl_bar.complete())
+
+        for f in self.__fields:
+            f.forget()
+        self.__finish_btn.forget()
+
+        utils.pack_and_wait(dl_bar)
+        dl_bar.exec_download()
+
+        def finish():
+            self.page_forget()
+            dl_bar.forget()
+
+        self.__finish_btn.configure(text="Finish", command=finish)
+        self.__finish_btn.pack(pady=5)
 
     def __finish(self):
         self.__finish_btn = ctk.CTkButton(

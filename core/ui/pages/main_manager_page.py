@@ -9,13 +9,14 @@ from core.ui.pages.import_mods_page import ImportModsPage
 
 
 class ModManagerPage(ManagerPageFrame):
-    def __init__(self, parent: ctk.CTkFrame):
+    def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(
             parent,
             fg_color=palette.MAIN_GRAY,
             border_color=palette.MAIN_BEIGE,
             border_width=2,
         )
+        self.app_root = root
 
         self.sidebar = SideBar(parent)
         self.page_pack()
@@ -24,7 +25,7 @@ class ModManagerPage(ManagerPageFrame):
         self.current_frame: str | None = None
 
         self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
-        self.frames[ImportModsPage.__name__] = ImportModsPage(self)
+        self.frames[ImportModsPage.__name__] = ImportModsPage(self, self.app_root)
 
         self.change_page("DownloadedModsPage")
 

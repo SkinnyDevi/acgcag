@@ -1,4 +1,5 @@
 import json
+import shutil
 import requests
 from urllib import parse
 from pathlib import Path
@@ -80,10 +81,13 @@ class ModPost:
 
         def download(self):
             dl_path = Path(f"acgcag_mods/{self._mod_info['itemid']}")
+            if dl_path.exists():
+                shutil.rmtree(dl_path)
             dl_path.mkdir()
 
             self.__download_mod_file(dl_path)
             self.__create_info_file(dl_path)
+            self._dl_obs.trigger("mod_dl_complete", True)
 
         def __create_info_file(self, mod_path: Path):
             file_path = mod_path.joinpath(f"{self._file_name}.json")
@@ -108,8 +112,6 @@ class ModPost:
                     chunks += chunk_size
                     self._dl_obs.trigger("mod_chunk_update", chunks / self._file_size)
                     mod.write(chunk)
-
-            self._dl_obs.trigger("mod_dl_complete")
 
     def __init__(self, itemid: str, response: list):
         self._itemid: str = itemid
