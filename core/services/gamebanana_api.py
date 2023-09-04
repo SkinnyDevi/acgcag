@@ -1,8 +1,6 @@
 import json
 import requests
-import base64
-import tkinter as tk
-from urllib import parse, request
+from urllib import parse
 from pathlib import Path
 from PIL import Image
 from observable import Observable
@@ -159,7 +157,7 @@ class ModPost:
         return self._sub_category if self._super_category == "Skins" else None
 
     @property
-    def downloads(self):
+    def downloads(self) -> list["ModPost.Download"]:
         return self._downloads
 
     @property

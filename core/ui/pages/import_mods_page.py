@@ -87,7 +87,11 @@ class ImportModsPage(ManagerPageFrame):
         if url == "":
             return self.__search_cleanup()
 
-        mod = GameBananaAPI.mod_from_url(url)
+        try:
+            mod = GameBananaAPI.mod_from_url(url)
+        except Exception:
+            return self.__search_cleanup()
+
         self.__mod_info_frame.set_mod(mod, self.__download_opts_frame)
         self.__mod_info_frame.page_pack()
 
@@ -123,13 +127,14 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
             a = iter(iterable)
             return zip(a, a)
 
-        for dl1, dl2 in pairwise(mod.downloads):
-            frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
-            frame.pack()
+        downloads = mod.downloads
+        for dl1, dl2 in pairwise(downloads):
+            frame = self.__pack_download(dl1, dl2)
+            self.__fields.append(frame)
 
-            self.__individual_download(frame, dl1)
-            self.__individual_download(frame, dl2)
-
+        odd_dls = len(downloads) % 2 != 0
+        if odd_dls:
+            frame = self.__pack_download(downloads[-1])
             self.__fields.append(frame)
 
     def destroy_frames(self):
@@ -137,6 +142,17 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
             f.destroy()
 
         self.__fields.clear()
+
+    def __pack_download(self, dl1: ModPost.Download, dl2: ModPost.Download = None):
+        frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
+        frame.pack()
+
+        self.__individual_download(frame, dl1)
+
+        if dl2 is not None:
+            self.__individual_download(frame, dl2)
+
+        return frame
 
     def __individual_download(self, parent: ctk.CTkFrame, dl: ModPost.Download):
         frame = ui_helpers.frame_left_aligned(parent, fg_color=palette.MAIN_GRAY)
@@ -174,17 +190,17 @@ class UIModInfoFrame(ctk.CTkFrame):
     def __init__(self, parent: ctk.CTkFrame):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
 
-        self.__name_text = "Name: "
-        self.__id_text = "Mod Id: "
-        self.__nsfw_text = "Is NSFW: "
+        image_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
+        image_frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
 
-        _, self.__mod_name = ui_helpers.label_left_aligned(self, self.__name_text, 15)
-        _, self.__mod_id = ui_helpers.label_left_aligned(self, self.__id_text, 15)
-        _, self.__mod_nsfw = ui_helpers.label_left_aligned(self, self.__nsfw_text, 15)
-        self.__download_btn_frame()
+        info_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
+        info_frame.pack(pady=15, padx=10, side=ctk.RIGHT, anchor="e")
 
-        self.__preview_label = ui_helpers.frame_text(parent, "Preview Image", 15)
-        self.__mod_preview = ctk.CTkLabel(parent, text="")
+        self.__text_info(info_frame)
+        self.__download_btn_frame(info_frame)
+
+        self.__preview_label = ui_helpers.frame_text(image_frame, "Preview Image", 17)
+        self.__mod_preview = ctk.CTkLabel(image_frame, text="", corner_radius=5)
 
     def page_pack(self):
         utils.pack_and_wait(self, pady=10)
@@ -196,10 +212,22 @@ class UIModInfoFrame(ctk.CTkFrame):
         self.__preview_label.forget()
         self.__mod_preview.forget()
 
-    def __download_btn_frame(self):
-        search_mod_frame = ui_helpers.frame_left_aligned(self)
+    def __text_info(self, info_frame: ctk.CTkFrame):
+        self.__name_text = "Name: "
+        self.__id_text = "Mod Id: "
+        self.__nsfw_text = "Is NSFW: "
+
+        self.__mod_name = ui_helpers.frame_text(info_frame, self.__name_text, 17)
+        self.__mod_name.pack(pady=5)
+        self.__mod_id = ui_helpers.frame_text(info_frame, self.__id_text, 17)
+        self.__mod_id.pack(pady=5)
+        self.__mod_nsfw = ui_helpers.frame_text(info_frame, self.__nsfw_text, 17)
+        self.__mod_nsfw.pack(pady=5)
+
+    def __download_btn_frame(self, frame: ctk.CTkFrame):
+        dl_frame = ctk.CTkFrame(frame, fg_color=palette.MAIN_GRAY)
         self.__search_btn = ctk.CTkButton(
-            search_mod_frame,
+            dl_frame,
             text="Download",
             fg_color=palette.BUTTON_BG_GRAY,
             hover_color=palette.DIM_BEIGE,
@@ -208,6 +236,7 @@ class UIModInfoFrame(ctk.CTkFrame):
             command=self.__download,
         )
         self.__search_btn.pack()
+        dl_frame.pack(pady=10)
 
     def set_mod(self, mod: ModPost, download_opts: UIDownloadOptionsFrame):
         self.__download_opts = download_opts
