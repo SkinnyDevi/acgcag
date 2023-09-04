@@ -28,8 +28,8 @@ def frame_text(
     return label
 
 
-def frame_left_aligned(parent: ctk.CTkFrame):
-    frame = ctk.CTkFrame(parent)
+def frame_left_aligned(parent: ctk.CTkFrame, **kwargs):
+    frame = ctk.CTkFrame(parent, **kwargs)
     frame.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
     return frame
 
