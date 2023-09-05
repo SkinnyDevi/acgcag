@@ -27,18 +27,14 @@ class ModConfigPage(ManagerPageFrame):
 
         self.__mod_container = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
 
-        self.__installed_text = ui_helpers.frame_text(
-            self.__mod_container,
-            "",
-            font_size=16,
-        )
-
         self.__setup_events()
+        self.__setup_installed_text()
         self.__setup_ui_buttons()
 
     def page_pack(self):
         self.__setup_mod_frame()
         self.__mod_container.pack(pady=20)
+        self.__installed_text_frame.pack(pady=10)
         self.__btns_frame.pack(pady=20)
         self.pack(pady=20)
 
@@ -65,7 +61,7 @@ class ModConfigPage(ManagerPageFrame):
             self.__mod_frame.destroy()
 
         self.__mod_frame = None
-        self.__installed_text.forget()
+        self.__installed_text_frame.forget()
 
     def __setup_mod_frame(self):
         self.__mod_frame = ModItemFrame(
@@ -74,6 +70,14 @@ class ModConfigPage(ManagerPageFrame):
         self.__mod_frame.page_pack()
         self.__installed_text.configure(
             text=f"Is installed: {'Yes' if self.__mod.is_installed else 'No'}"
+        )
+
+    def __setup_installed_text(self):
+        self.__installed_text_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
+        self.__installed_text = ui_helpers.frame_text(
+            self.__installed_text_frame,
+            "",
+            font_size=16,
         )
         self.__installed_text.pack()
 
