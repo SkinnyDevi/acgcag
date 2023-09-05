@@ -1,6 +1,6 @@
 import json
-import contextlib
-import shutil
+import os
+import stat
 from pathlib import Path
 from PIL import Image
 
@@ -89,13 +89,21 @@ class LocalMod:
         path = Path(f"3dmigoto/Mods/{self._itemid}")
 
         if path.exists():
-            with contextlib.suppress(Exception):
-                shutil.rmtree(path)
+            self.__super_rmtree(path)
 
     def delete(self):
         if self.is_installed:
             self.uninstall()
 
         mod_path = Path(f"acgcag_mods/{self._itemid}")
-        with contextlib.suppress(Exception):
-            shutil.rmtree(mod_path)
+        self.__super_rmtree(mod_path)
+
+    def __super_rmtree(self, path: Path):
+        for root, dirs, files in os.walk(path, topdown=False):
+            for name in files:
+                filename = os.path.join(root, name)
+                os.chmod(filename, stat.S_IWUSR)
+                os.remove(filename)
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(path)
