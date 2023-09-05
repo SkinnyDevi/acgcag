@@ -1,4 +1,6 @@
+import contextlib
 import customtkinter as ctk
+from zipfile import BadZipFile
 from typing import Callable
 from observable import Observable
 
@@ -25,6 +27,12 @@ class ModConfigPage(ManagerPageFrame):
 
         self.__mod_container = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
 
+        self.__installed_text = ui_helpers.frame_text(
+            self.__mod_container,
+            "",
+            font_size=16,
+        )
+
         self.__setup_events()
         self.__setup_ui_buttons()
 
@@ -38,6 +46,7 @@ class ModConfigPage(ManagerPageFrame):
         self.forget()
         self.__remove_mod_frame()
         self.__btns_frame.forget()
+        self.__reset_buttons()
 
     def __setup_events(self):
         ModConfigPage.setup_obs.on("set_mod", lambda x: self.__set_mod(x))
@@ -56,18 +65,27 @@ class ModConfigPage(ManagerPageFrame):
             self.__mod_frame.destroy()
 
         self.__mod_frame = None
+        self.__installed_text.forget()
 
     def __setup_mod_frame(self):
         self.__mod_frame = ModItemFrame(
             self.__mod_container, self.__mod, manage_button=False
         )
         self.__mod_frame.page_pack()
+        self.__installed_text.configure(
+            text=f"Is installed: {'Yes' if self.__mod.is_installed else 'No'}"
+        )
+        self.__installed_text.pack()
 
     def __setup_ui_buttons(self):
         self.__btns_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
-        self.__ui_button(self.__btns_frame, "Install", lambda: print("Install"))
-        self.__ui_button(self.__btns_frame, "Uninstall", lambda: print("Uninstall"))
-        self.__ui_button(self.__btns_frame, "Delete", lambda: print("Delete"))
+        self.__install_btn = self.__ui_button(
+            self.__btns_frame, "Install", self.__install
+        )
+        self.__uninstall_btn = self.__ui_button(
+            self.__btns_frame, "Uninstall", self.__uninstall
+        )
+        self.__delete_btn = self.__ui_button(self.__btns_frame, "Delete", self.__remove)
         self.__ui_button(
             self.__btns_frame, "Back", lambda: self.__page_change("DownloadedModsPage")
         )
@@ -84,12 +102,29 @@ class ModConfigPage(ManagerPageFrame):
             hover_color=palette.DIM_BEIGE,
         )
         btn.pack(padx=4)
+        return btn
+
+    def __reset_buttons(self):
+        self.__install_btn.configure(text="Install", state="normal")
+        self.__uninstall_btn.configure(text="Uninstall", state="normal")
+        self.__delete_btn.configure(text="Delete", state="normal")
 
     def __install(self):
-        pass
+        self.__install_btn.configure(text="Installing...", state="disabled")
+        with contextlib.suppress(BadZipFile):
+            self.__mod.install()
+        self.__install_btn.configure(text="Installed", state="normal")
+        self.__installed_text.configure(text="Is installed: Yes")
 
     def __uninstall(self):
-        pass
+        self.__uninstall_btn.configure(text="Uninstalling...", state="disabled")
+        self.__mod.uninstall()
+        self.__uninstall_btn.configure(text="Uninstalled", state="normal")
+        self.__installed_text.configure(text="Is installed: No")
 
     def __remove(self):
-        pass
+        self.__delete_btn.configure(text="Deleting...", state="disabled")
+        self.__mod.delete()
+        self.__delete_btn.configure(text="Deleted", state="disabled")
+        self.__installed_text.configure(text="Is installed: Deleted")
+        self.__page_change("DownloadedModsPage")

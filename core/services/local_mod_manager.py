@@ -1,7 +1,10 @@
 import json
+import contextlib
+import shutil
 from pathlib import Path
 from PIL import Image
 
+from core.utils import MultiExtensionExtractor
 from core.services.gamebanana_api import MAIN_SITE
 
 
@@ -40,6 +43,10 @@ class LocalMod:
         self._download_url: str = mod_info["download_url"]
         self._mod_page: str = f"{MAIN_SITE}/mods/{mod_id}"
 
+    def __load_mod_info_file(self, path: Path, id: str) -> dict:
+        with open(path.joinpath(f"{id}.json"), "r") as f:
+            return json.load(f)
+
     @property
     def itemid(self):
         return self._itemid
@@ -70,6 +77,25 @@ class LocalMod:
 
         return image
 
-    def __load_mod_info_file(self, path: Path, id: str) -> dict:
-        with open(path.joinpath(f"{id}.json"), "r") as f:
-            return json.load(f)
+    @property
+    def is_installed(self):
+        return Path(f"3dmigoto/Mods/{self._itemid}").exists()
+
+    def install(self):
+        extractor = MultiExtensionExtractor(self._mod_file, self._itemid)
+        extractor.extract()
+
+    def uninstall(self):
+        path = Path(f"3dmigoto/Mods/{self._itemid}")
+
+        if path.exists():
+            with contextlib.suppress(Exception):
+                shutil.rmtree(path)
+
+    def delete(self):
+        if self.is_installed:
+            self.uninstall()
+
+        mod_path = Path(f"acgcag_mods/{self._itemid}")
+        with contextlib.suppress(Exception):
+            shutil.rmtree(mod_path)

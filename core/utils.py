@@ -74,3 +74,69 @@ def triplets_of(iterable: Iterable, fill=True):
         l = itertools.chain(l, [None for _ in range(amount)])
 
     return zip(l, l, l)
+
+
+import shutil
+import contextlib
+from zipfile import ZipFile
+from pyunpack import Archive
+from py7zr import SevenZipFile
+
+
+class MultiExtensionExtractor:
+    def __init__(self, file_path: Path, mod_id: str):
+        self._file = file_path
+        self._mod_id = mod_id
+
+    def extract(self) -> Path:
+        if not Path("3dmigoto").exists():
+            raise FileNotFoundError(
+                "3dmigoto was not found. Please re-open the app to re-run the setup process"
+            )
+
+        return self.__extension_parser()
+
+    def __extension_parser(self):
+        ext = self._file.suffix
+
+        match ext:
+            case ".zip":
+                return self.__zip_extract()
+
+            case ".7z":
+                return self.__7z_extract()
+
+            case ".rar":
+                return self.__rar_extract()
+
+    def __zip_extract(self):
+        path = self.__extract_path()
+        with ZipFile(self._file, "r") as mod_file:
+            mod_file.extractall(path)
+
+        return path
+
+    def __7z_extract(self):
+        path = self.__extract_path()
+        file = SevenZipFile(self._file)
+        file.extractall(path)
+        return path
+
+    def __rar_extract(self):
+        path = self.__extract_path()
+
+        file = Archive(self._file)
+        file.extractall(path)
+        return path
+
+    def __extract_path(self):
+        path = Path(f"3dmigoto/Mods/{self._mod_id}")
+
+        if path.exists():
+            with contextlib.suppress(Exception):
+                for f in path.glob("*"):
+                    shutil.rmtree(f)
+        else:
+            path.mkdir()
+
+        return path
