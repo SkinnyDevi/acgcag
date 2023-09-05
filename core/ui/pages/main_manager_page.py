@@ -6,6 +6,7 @@ from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.side_bar import SideBar
 from core.ui.pages.downloaded_page import DownloadedModsPage
 from core.ui.pages.import_mods_page import ImportModsPage
+from core.ui.pages.mod_config_page import ModConfigPage
 
 
 class ModManagerPage(ManagerPageFrame):
@@ -26,10 +27,12 @@ class ModManagerPage(ManagerPageFrame):
 
         self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
         self.frames[ImportModsPage.__name__] = ImportModsPage(self, self.app_root)
+        self.frames[ModConfigPage.__name__] = ModConfigPage(self)
 
-        self.change_page("DownloadedModsPage", False)
+        self.change_page("DownloadedModsPage")
 
         SideBar.page_change_event.on("page_change", lambda p: self.change_page(p))
+        ModConfigPage.page_change_event.on("page_change", lambda p: self.change_page(p))
         self.bind("<Button-1>", lambda x: self.focus())
 
     def page_pack(self):
@@ -40,7 +43,7 @@ class ModManagerPage(ManagerPageFrame):
         self.sidebar.forget()
         self.forget()
 
-    def change_page(self, page_name: str, wait=True):
+    def change_page(self, page_name: str):
         """
         Change the page displayed in the app.
         """

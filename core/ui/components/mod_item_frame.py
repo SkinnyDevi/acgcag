@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from typing import Callable
 
 import core.ui.palette as palette
 import core.ui.components.helpers as ui_helpers
@@ -8,7 +9,13 @@ from core.ui.components.custom_frame import ManagerPageFrame
 
 
 class ModItemFrame(ManagerPageFrame):
-    def __init__(self, parent: ctk.CTkFrame, mod: LocalMod):
+    def __init__(
+        self,
+        parent: ctk.CTkFrame,
+        mod: LocalMod,
+        on_manager: Callable = None,
+        manage_button: bool = True,
+    ):
         super().__init__(
             parent,
             width=365,
@@ -19,6 +26,8 @@ class ModItemFrame(ManagerPageFrame):
         )
         self.propagate(False)
         self._mod = mod
+        self._on_manager = on_manager
+        self._manage_button = manage_button
 
         self.__define_image()
         self.__define_info()
@@ -53,16 +62,17 @@ class ModItemFrame(ManagerPageFrame):
         self.__mod_label(info_frame, f"NSFW: {self._mod.nsfw}")
         self.__mod_label(info_frame, f"Character: {self._mod.character}")
 
-        btn = ctk.CTkButton(
-            info_frame,
-            text="Manage",
-            font=palette.APP_FONT(14),
-            fg_color=palette.BUTTON_BG_GRAY,
-            hover_color=palette.DIM_BEIGE,
-            command=lambda: print(self._mod.name),
-        )
+        if self._manage_button:
+            btn = ctk.CTkButton(
+                info_frame,
+                text="Manage",
+                font=palette.APP_FONT(14),
+                fg_color=palette.BUTTON_BG_GRAY,
+                hover_color=palette.DIM_BEIGE,
+                command=self._on_manager,
+            )
 
-        btn.pack(pady=5)
+            btn.pack(pady=5)
 
     def __mod_label(self, frame: ctk.CTkFrame, text: str):
         holder = ctk.CTkFrame(frame)

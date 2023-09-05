@@ -7,6 +7,7 @@ import core.ui.components.helpers as ui_helpers
 from core.services.local_mod_manager import LocalMod, LocalModManager
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.mod_item_frame import ModItemFrame
+from core.ui.pages.mod_config_page import ModConfigPage
 
 
 class DownloadedModsPage(ManagerPageFrame):
@@ -18,10 +19,9 @@ class DownloadedModsPage(ManagerPageFrame):
             self, 1100, 540, fg_color=palette.MAIN_GRAY
         )
 
-        title = ui_helpers.frame_text(
+        ui_helpers.frame_text(
             self, "DOWNLOADED MODS", 20, color=palette.BRIGHT_BEIGE
-        )
-        title.pack(pady=10)
+        ).pack(pady=10)
 
         self.__mod_frames: list[ctk.CTkFrame] = []
 
@@ -50,10 +50,17 @@ class DownloadedModsPage(ManagerPageFrame):
         frame = ctk.CTkFrame(self.__scrollframe, fg_color=palette.MAIN_GRAY)
         frame.pack(anchor="w")
 
-        ModItemFrame(frame, mod1).page_pack()
+        ModItemFrame(frame, mod1, lambda: self.__open_manager_page(mod1)).page_pack()
         if mod2 is not None:
-            ModItemFrame(frame, mod2).page_pack()
+            ModItemFrame(
+                frame, mod2, lambda: self.__open_manager_page(mod2)
+            ).page_pack()
         if mod3 is not None:
-            ModItemFrame(frame, mod3).page_pack()
+            ModItemFrame(
+                frame, mod3, lambda: self.__open_manager_page(mod3)
+            ).page_pack()
 
         self.__mod_frames.append(frame)
+
+    def __open_manager_page(self, mod: LocalMod):
+        ModConfigPage.setup_obs.trigger("set_mod", mod)
