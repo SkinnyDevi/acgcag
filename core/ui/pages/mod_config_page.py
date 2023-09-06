@@ -28,14 +28,12 @@ class ModConfigPage(ManagerPageFrame):
         self.__mod_container = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
 
         self.__setup_events()
-        self.__setup_installed_text()
         self.__setup_ui_buttons()
 
     def page_pack(self):
         self.__setup_mod_frame()
-        self.__mod_container.pack(pady=20)
-        self.__installed_text_frame.pack(pady=10)
-        self.__btns_frame.pack(pady=20)
+        self.__mod_container.pack(pady=30)
+        self.__btns_frame.pack()
         self.pack(pady=20)
 
     def page_forget(self):
@@ -61,25 +59,15 @@ class ModConfigPage(ManagerPageFrame):
             self.__mod_frame.destroy()
 
         self.__mod_frame = None
-        self.__installed_text_frame.forget()
 
     def __setup_mod_frame(self):
         self.__mod_frame = ModItemFrame(
-            self.__mod_container, self.__mod, manage_button=False
+            self.__mod_container,
+            self.__mod,
+            manage_button=False,
+            display_installed=True,
         )
         self.__mod_frame.page_pack()
-        self.__installed_text.configure(
-            text=f"Is installed: {'Yes' if self.__mod.is_installed else 'No'}"
-        )
-
-    def __setup_installed_text(self):
-        self.__installed_text_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
-        self.__installed_text = ui_helpers.frame_text(
-            self.__installed_text_frame,
-            "",
-            font_size=16,
-        )
-        self.__installed_text.pack()
 
     def __setup_ui_buttons(self):
         self.__btns_frame = ctk.CTkFrame(self, fg_color=palette.MAIN_GRAY)
@@ -118,18 +106,18 @@ class ModConfigPage(ManagerPageFrame):
         self.__install_btn.configure(text="Installing...", state="disabled")
         with contextlib.suppress(BadZipFile):
             self.__mod.install()
+            self.__mod_frame.update_installed_text()
         self.__install_btn.configure(text="Installed", state="normal")
-        self.__installed_text.configure(text="Is installed: Yes")
 
     def __uninstall(self):
         self.__uninstall_btn.configure(text="Uninstalling...", state="disabled")
         self.__mod.uninstall()
+        self.__mod_frame.update_installed_text()
         self.__uninstall_btn.configure(text="Uninstalled", state="normal")
-        self.__installed_text.configure(text="Is installed: No")
 
     def __remove(self):
         self.__delete_btn.configure(text="Deleting...", state="disabled")
         self.__mod.delete()
+        self.__mod_frame.update_installed_text()
         self.__delete_btn.configure(text="Deleted", state="disabled")
-        self.__installed_text.configure(text="Is installed: Deleted")
         self.__page_change("DownloadedModsPage")

@@ -51,17 +51,21 @@ class DownloadedModsPage(ManagerPageFrame):
         frame = ctk.CTkFrame(self.__scrollframe, fg_color=palette.MAIN_GRAY)
         frame.pack(anchor="w")
 
-        ModItemFrame(frame, mod1, lambda: self.__open_manager_page(mod1)).page_pack()
+        self.__new_mod_item_frame(frame, mod1).page_pack()
         if mod2 is not None:
-            ModItemFrame(
-                frame, mod2, lambda: self.__open_manager_page(mod2)
-            ).page_pack()
+            self.__new_mod_item_frame(frame, mod2).page_pack()
         if mod3 is not None:
-            ModItemFrame(
-                frame, mod3, lambda: self.__open_manager_page(mod3)
-            ).page_pack()
+            self.__new_mod_item_frame(frame, mod3).page_pack()
 
         self.__mod_frames.append(frame)
+
+    def __new_mod_item_frame(self, frame: ctk.CTkFrame, mod: LocalMod):
+        return ModItemFrame(
+            frame,
+            mod,
+            lambda: self.__open_manager_page(mod),
+            display_installed=True,
+        )
 
     def __open_manager_page(self, mod: LocalMod):
         ModConfigPage.setup_obs.trigger("set_mod", mod)
