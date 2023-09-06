@@ -1,6 +1,8 @@
 import itertools
+import threading
 import customtkinter as ctk
 from pathlib import Path
+from typing import Callable
 from typing import Iterable
 
 __WIN_WIDTH = 1200
@@ -74,6 +76,15 @@ def triplets_of(iterable: Iterable, fill=True):
         l = itertools.chain(l, [None for _ in range(amount)])
 
     return zip(l, l, l)
+
+
+def thread(func: Callable, args: tuple = (), start=False):
+    t = threading.Thread(target=func, args=args)
+
+    if start:
+        t.start()
+
+    return t
 
 
 import shutil

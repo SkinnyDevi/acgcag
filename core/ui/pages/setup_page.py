@@ -1,6 +1,7 @@
+import os
+import sys
 import requests
 import threading
-import sys
 import customtkinter as ctk
 from zipfile import ZipFile
 from pathlib import Path
@@ -216,6 +217,7 @@ class SetupPage(ManagerPageFrame):
             zip_file.extractall(".")
 
         path.unlink()
+        os.rename(r"3dmigoto\\3DMigoto Loader.exe", r"3dmigoto\\3dmigoto_loader.exe")
 
         custom_mod_folder = Path("acgcag_mods")
         if not custom_mod_folder.exists():
