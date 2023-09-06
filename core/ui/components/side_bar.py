@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Callable
 from observable import Observable
 
-import core.ui.palette as palette
 import core.utils as utils
+import core.ui.palette as palette
 
 from core.ui.components.custom_frame import ManagerPageFrame
 
@@ -23,12 +23,12 @@ class SideBar(ManagerPageFrame):
             corner_radius=0,
         )
 
-        self.__sidebar_button(
+        self.__dl_mods_btn = self.__sidebar_button(
             "download-icon.png",
             lambda: self.__action_page_change("DownloadedModsPage"),
         )
 
-        self.__sidebar_button(
+        self.__banana_btn = self.__sidebar_button(
             "banana.png",
             lambda: self.__action_page_change("ImportModsPage"),
         )
@@ -45,7 +45,25 @@ class SideBar(ManagerPageFrame):
         self.pack(anchor="w", fill=ctk.BOTH, side=ctk.LEFT)
 
     def page_forget(self):
-        self.page_forget()
+        self.forget()
+
+    def buttons_enabled(self):
+        state1 = self.__dl_mods_btn.cget("state")
+        state2 = self.__banana_btn.cget("state")
+        state3 = self.__start_btn.cget("state")
+
+        def enabled(x: str):
+            return x == "normal"
+
+        return enabled(state1) and enabled(state2) and enabled(state3)
+
+    def state_for_buttons(self, enable: bool):
+        enabled = "normal" if enable else "disabled"
+        color = palette.BRIGHT_BEIGE if enable else palette.DIM_BEIGE
+
+        self.__dl_mods_btn.configure(state=enabled, fg_color=color)
+        self.__banana_btn.configure(state=enabled, fg_color=color)
+        self.__start_btn.configure(state=enabled, fg_color=color)
 
     def __action_page_change(self, page_name: str):
         SideBar.page_change_event.trigger("page_change", page_name)
@@ -72,11 +90,9 @@ class SideBar(ManagerPageFrame):
         return ctk.CTkImage(dark_image=Image.open(Path(f"assets/{icon_name}")))
 
     def __start_3dmigoto(self):
-        # TODO: Upon call, change to page where it waits for genshin to open
-        # with a button to finish when genshin and 3dmigoto loads to change screen
-
-        a = subprocess.run(
-            'start cmd /k "cd 3dmigoto && call 3dmigoto_loader.exe"', shell=True
+        self.__action_page_change("WaitForGenshinPage")
+        subprocess.run(
+            'start cmd /k "cd 3dmigoto && call 3dmigoto_loader.exe && exit"', shell=True
         )
         self.__start_btn.configure(image=self.__btn_icon("check-icon.png"))
         time.sleep(5)

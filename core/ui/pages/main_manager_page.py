@@ -4,9 +4,11 @@ import core.ui.palette as palette
 
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.side_bar import SideBar
+
 from core.ui.pages.downloaded_page import DownloadedModsPage
 from core.ui.pages.import_mods_page import ImportModsPage
 from core.ui.pages.mod_config_page import ModConfigPage
+from core.ui.pages.wait_for_genshin_page import WaitForGenshinPage
 
 
 class ModManagerPage(ManagerPageFrame):
@@ -18,18 +20,27 @@ class ModManagerPage(ManagerPageFrame):
         self.page_pack()
         palette.load_background(self._canvas, "bg_test.jpg")
 
+        self.__attach_frames()
+        self.__attach_events()
+        self.bind("<Button-1>", lambda x: self.focus())
+
+    def __attach_frames(self):
         self.frames: dict[str, ManagerPageFrame] = {}
         self.current_frame: str | None = None
 
         self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
         self.frames[ImportModsPage.__name__] = ImportModsPage(self, self.app_root)
         self.frames[ModConfigPage.__name__] = ModConfigPage(self)
+        self.frames[WaitForGenshinPage.__name__] = WaitForGenshinPage(self)
 
         self.change_page("DownloadedModsPage")
 
+    def __attach_events(self):
         SideBar.page_change_event.on("page_change", lambda p: self.change_page(p))
         ModConfigPage.page_change_event.on("page_change", lambda p: self.change_page(p))
-        self.bind("<Button-1>", lambda x: self.focus())
+        WaitForGenshinPage.page_change_event.on(
+            "page_change", lambda p: self.change_page(p)
+        )
 
     def page_pack(self):
         self.sidebar.page_pack()
@@ -52,6 +63,11 @@ class ModManagerPage(ManagerPageFrame):
 
         if page_name not in self.frames.keys():
             raise RuntimeError(f"No page in the app named '{page_name}'")
+
+        if page_name == WaitForGenshinPage.__name__:
+            self.sidebar.state_for_buttons(False)
+        elif not self.sidebar.buttons_enabled():
+            self.sidebar.state_for_buttons(True)
 
         page = self.frames[page_name]
         self.current_frame = page_name
