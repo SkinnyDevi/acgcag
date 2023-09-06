@@ -24,18 +24,24 @@ class SideBar(ManagerPageFrame):
         )
 
         self.__dl_mods_btn = self.__sidebar_button(
-            "download-icon.png",
+            "downloaded-icon.png",
             lambda: self.__action_page_change("DownloadedModsPage"),
         )
 
-        self.__banana_btn = self.__sidebar_button(
-            "banana.png",
+        self.__import_btn = self.__sidebar_button(
+            "import-icon.png",
             lambda: self.__action_page_change("ImportModsPage"),
         )
 
         self.__start_btn = self.__sidebar_button(
             "play-icon.png",
             lambda: utils.thread(self.__start_3dmigoto, start=True),
+            False,
+        )
+
+        self.__banana_btn = self.__sidebar_button(
+            "banana.png",
+            lambda: os.system('start "" https://gamebanana.com/games/8552'),
             False,
         )
 
@@ -49,21 +55,25 @@ class SideBar(ManagerPageFrame):
 
     def buttons_enabled(self):
         state1 = self.__dl_mods_btn.cget("state")
-        state2 = self.__banana_btn.cget("state")
+        state2 = self.__import_btn.cget("state")
         state3 = self.__start_btn.cget("state")
+        state4 = self.__banana_btn.cget("state")
 
         def enabled(x: str):
             return x == "normal"
 
-        return enabled(state1) and enabled(state2) and enabled(state3)
+        return (
+            enabled(state1) and enabled(state2) and enabled(state3) and enabled(state4)
+        )
 
     def state_for_buttons(self, enable: bool):
         enabled = "normal" if enable else "disabled"
         color = palette.BRIGHT_BEIGE if enable else palette.DIM_BEIGE
 
         self.__dl_mods_btn.configure(state=enabled, fg_color=color)
-        self.__banana_btn.configure(state=enabled, fg_color=color)
+        self.__import_btn.configure(state=enabled, fg_color=color)
         self.__start_btn.configure(state=enabled, fg_color=color)
+        self.__banana_btn.configure(state=enabled, fg_color=color)
 
     def __action_page_change(self, page_name: str):
         SideBar.page_change_event.trigger("page_change", page_name)
