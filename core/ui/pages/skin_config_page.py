@@ -12,7 +12,7 @@ from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.mod_item_frame import ModItemFrame
 
 
-class ModConfigPage(ManagerPageFrame):
+class SkinConfigPage(ManagerPageFrame):
     page_change_event = Observable()
     setup_obs = Observable()
 
@@ -21,7 +21,7 @@ class ModConfigPage(ManagerPageFrame):
         self.__mod_frame = None
 
         self._title = ui_helpers.frame_text(
-            self, "MOD: ", 20, color=palette.BRIGHT_BEIGE
+            self, "SKIN: ", 20, color=palette.BRIGHT_BEIGE
         )
         self._title.pack(pady=10)
 
@@ -43,16 +43,16 @@ class ModConfigPage(ManagerPageFrame):
         self.__reset_buttons()
 
     def __setup_events(self):
-        ModConfigPage.setup_obs.on("set_mod", lambda x: self.__set_mod(x))
+        SkinConfigPage.setup_obs.on("set_mod", lambda x: self.__set_mod(x))
 
     def __set_mod(self, mod: LocalMod):
         self.__mod = mod
 
-        self._title.configure(text=f"MOD: {self.__mod.name.upper()}")
-        self.__page_change(ModConfigPage.__name__)
+        self._title.configure(text=f"SKIN: {self.__mod.name.upper()}")
+        self.__page_change(SkinConfigPage.__name__)
 
     def __page_change(self, page: str):
-        ModConfigPage.page_change_event.trigger("page_change", page)
+        SkinConfigPage.page_change_event.trigger("page_change", page)
 
     def __remove_mod_frame(self):
         if self.__mod_frame is not None:

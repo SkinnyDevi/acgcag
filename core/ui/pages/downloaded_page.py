@@ -7,7 +7,7 @@ import core.ui.components.helpers as ui_helpers
 from core.services.local_mod_manager import LocalMod, LocalModManager
 from core.ui.components.custom_frame import ManagerPageFrame
 from core.ui.components.mod_item_frame import ModItemFrame
-from core.ui.pages.mod_config_page import ModConfigPage
+from core.ui.pages.skin_config_page import SkinConfigPage
 
 
 class DownloadedModsPage(ManagerPageFrame):
@@ -21,7 +21,7 @@ class DownloadedModsPage(ManagerPageFrame):
         )
 
         ui_helpers.frame_text(
-            self, "DOWNLOADED MODS", 20, color=palette.BRIGHT_BEIGE
+            self, "DOWNLOADED SKINS", 20, color=palette.BRIGHT_BEIGE
         ).pack(pady=10)
 
         self.__mod_frames: list[ctk.CTkFrame] = []
@@ -68,4 +68,4 @@ class DownloadedModsPage(ManagerPageFrame):
         )
 
     def __open_manager_page(self, mod: LocalMod):
-        ModConfigPage.setup_obs.trigger("set_mod", mod)
+        SkinConfigPage.setup_obs.trigger("set_mod", mod)

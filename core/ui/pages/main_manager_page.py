@@ -7,7 +7,7 @@ from core.ui.components.side_bar import SideBar
 
 from core.ui.pages.downloaded_page import DownloadedModsPage
 from core.ui.pages.import_mods_page import ImportModsPage
-from core.ui.pages.mod_config_page import ModConfigPage
+from core.ui.pages.skin_config_page import SkinConfigPage
 from core.ui.pages.wait_for_genshin_page import WaitForGenshinPage
 
 
@@ -30,14 +30,16 @@ class ModManagerPage(ManagerPageFrame):
 
         self.frames[DownloadedModsPage.__name__] = DownloadedModsPage(self)
         self.frames[ImportModsPage.__name__] = ImportModsPage(self, self.app_root)
-        self.frames[ModConfigPage.__name__] = ModConfigPage(self)
+        self.frames[SkinConfigPage.__name__] = SkinConfigPage(self)
         self.frames[WaitForGenshinPage.__name__] = WaitForGenshinPage(self)
 
         self.change_page("DownloadedModsPage")
 
     def __attach_events(self):
         SideBar.page_change_event.on("page_change", lambda p: self.change_page(p))
-        ModConfigPage.page_change_event.on("page_change", lambda p: self.change_page(p))
+        SkinConfigPage.page_change_event.on(
+            "page_change", lambda p: self.change_page(p)
+        )
         WaitForGenshinPage.page_change_event.on(
             "page_change", lambda p: self.change_page(p)
         )

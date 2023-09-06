@@ -17,7 +17,7 @@ class ImportModsPage(ManagerPageFrame):
         self.app_root = root
 
         title = ui_helpers.frame_text(
-            self, "IMPORT MODS FROM GAMEBANANA", 20, color=palette.BRIGHT_BEIGE
+            self, "IMPORT SKINS FROM GAMEBANANA", 20, color=palette.BRIGHT_BEIGE
         )
         title.pack(pady=10)
 
@@ -231,7 +231,7 @@ class UIModInfoFrame(ctk.CTkFrame):
 
     def __text_info(self, info_frame: ctk.CTkFrame):
         self.__name_text = "Name: "
-        self.__id_text = "Mod Id: "
+        self.__id_text = "GB Id: "
         self.__nsfw_text = "Is NSFW: "
 
         self.__mod_name = ui_helpers.frame_text(info_frame, self.__name_text, 17)
