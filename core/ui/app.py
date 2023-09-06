@@ -1,4 +1,5 @@
-import tkinter as tk
+__version__ = "1.0.0"
+
 import customtkinter as ctk
 from PIL import Image
 from pathlib import Path
