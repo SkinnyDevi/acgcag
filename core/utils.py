@@ -89,8 +89,8 @@ def thread(func: Callable, args: tuple = (), start=False):
 
 import shutil
 import contextlib
+import patoolib
 from zipfile import ZipFile
-from pyunpack import Archive
 from py7zr import SevenZipFile
 
 
@@ -136,8 +136,7 @@ class MultiExtensionExtractor:
     def __rar_extract(self):
         path = self.__extract_path()
 
-        file = Archive(self._file)
-        file.extractall(path)
+        patoolib.extract_archive(self._file, outdir=path)
         return path
 
     def __extract_path(self):

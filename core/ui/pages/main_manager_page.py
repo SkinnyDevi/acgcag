@@ -18,7 +18,7 @@ class ModManagerPage(ManagerPageFrame):
 
         self.sidebar = SideBar(parent)
         self.page_pack()
-        palette.load_background(self._canvas, "bg_test.jpg")
+        palette.load_background(self._canvas, "app-bg.jpg")
 
         self.__attach_frames()
         self.__attach_events()

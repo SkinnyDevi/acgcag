@@ -3,5 +3,6 @@ Pillow==10.0.0
 requests==2.31.0
 observable==1.0.3
 patool==1.12
-pyunpack==0.3
 py7zr==0.20.6
+patool==1.12
+auto-py-to-exe==2.38.0
