@@ -11,16 +11,12 @@ from core.ui.pages.mod_config_page import ModConfigPage
 
 class ModManagerPage(ManagerPageFrame):
     def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
-        super().__init__(
-            parent,
-            fg_color=palette.MAIN_GRAY,
-            border_color=palette.MAIN_BEIGE,
-            border_width=2,
-        )
+        super().__init__(parent, fg_color=palette.MAIN_GRAY)
         self.app_root = root
 
         self.sidebar = SideBar(parent)
         self.page_pack()
+        palette.load_background(self._canvas, "bg_test.jpg")
 
         self.frames: dict[str, ManagerPageFrame] = {}
         self.current_frame: str | None = None

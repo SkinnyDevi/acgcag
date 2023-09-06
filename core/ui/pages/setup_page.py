@@ -75,6 +75,9 @@ class SetupPage(ManagerPageFrame):
             text="Start Setup",
             command=self.__start_setup,
             font=palette.APP_FONT(14),
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
+            hover_color=palette.DIM_BEIGE,
         )
         start_setup_btn.pack()
         self.start_frame.pack(fill=ctk.BOTH, expand=True)
@@ -101,6 +104,9 @@ class SetupPage(ManagerPageFrame):
             text="Finish Setup",
             command=self.__change_to_mainapp,
             font=palette.APP_FONT(14),
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
+            hover_color=palette.DIM_BEIGE,
         )
         finish_setup_btn.pack(pady=20)
 

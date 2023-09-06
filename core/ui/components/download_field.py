@@ -40,7 +40,9 @@ class DownloadField(ctk.CTkFrame):
         """
 
         progress_frame = ui_helpers.frame_left_aligned(self)
-        self.progress_bar = ctk.CTkProgressBar(progress_frame, 500, 10)
+        self.progress_bar = ctk.CTkProgressBar(
+            progress_frame, 500, 10, fg_color=palette.MAIN_BEIGE
+        )
         self.progress_bar.pack()
         self.progress_bar.set(0)
 

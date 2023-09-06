@@ -102,7 +102,8 @@ class ModConfigPage(ManagerPageFrame):
             text=text,
             command=cmd,
             font=palette.APP_FONT(16),
-            fg_color=palette.BUTTON_BG_GRAY,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             hover_color=palette.DIM_BEIGE,
         )
         btn.pack(padx=4)

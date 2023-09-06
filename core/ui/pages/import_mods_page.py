@@ -46,6 +46,8 @@ class ImportModsPage(ManagerPageFrame):
             entry_frame,
             width=325,
             height=32,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             font=palette.APP_FONT(15),
             placeholder_text="https://gamebanana.com/mods/465880",
         )
@@ -56,9 +58,9 @@ class ImportModsPage(ManagerPageFrame):
         self.__search_btn = ctk.CTkButton(
             search_mod_frame,
             text="Search",
-            fg_color=palette.BUTTON_BG_GRAY,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             hover_color=palette.DIM_BEIGE,
-            text_color=palette.WHITE,
             font=palette.APP_FONT(16),
             command=self.__start_search,
         )
@@ -158,9 +160,9 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
         download_btn = ctk.CTkButton(
             frame,
             text="Download",
-            fg_color=palette.BUTTON_BG_GRAY,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             hover_color=palette.DIM_BEIGE,
-            text_color=palette.WHITE,
             font=palette.APP_FONT(16),
         )
         download_btn.pack(pady=15, padx=10, side=ctk.LEFT, anchor="w")
@@ -193,9 +195,9 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
         self.__finish_btn = ctk.CTkButton(
             self,
             text="Clear Search",
-            fg_color=palette.BUTTON_BG_GRAY,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             hover_color=palette.DIM_BEIGE,
-            text_color=palette.WHITE,
             font=palette.APP_FONT(16),
             command=self.page_forget,
         )
@@ -244,9 +246,9 @@ class UIModInfoFrame(ctk.CTkFrame):
         self.__search_btn = ctk.CTkButton(
             dl_frame,
             text="Download",
-            fg_color=palette.BUTTON_BG_GRAY,
+            fg_color=palette.BUTTON_BACKGROUND,
+            text_color=palette.TEXT_COLOR_DARK,
             hover_color=palette.DIM_BEIGE,
-            text_color=palette.WHITE,
             font=palette.APP_FONT(16),
             command=self.__download,
         )

@@ -12,11 +12,12 @@ from core.ui.pages.mod_config_page import ModConfigPage
 
 class DownloadedModsPage(ManagerPageFrame):
     def __init__(self, parent):
-        super().__init__(parent, fg_color=palette.MAIN_GRAY)
+        super().__init__(parent, fg_color="transparent")
+
         self.__mm = LocalModManager()
 
         self.__scrollframe = ctk.CTkScrollableFrame(
-            self, 1100, 540, fg_color=palette.MAIN_GRAY
+            self, 1125, 540, fg_color=palette.MAIN_GRAY
         )
 
         ui_helpers.frame_text(

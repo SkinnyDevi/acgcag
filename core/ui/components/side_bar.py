@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 from pathlib import Path
+from typing import Callable
 from observable import Observable
 
 import core.ui.palette as palette
@@ -14,50 +15,43 @@ class SideBar(ManagerPageFrame):
     def __init__(self, root: ctk.CTk):
         super().__init__(
             root,
-            fg_color=palette.MAIN_GRAY,
-            border_color=palette.MAIN_BEIGE,
-            border_width=2,
+            fg_color=palette.MENU_BACKGROUND,
+            corner_radius=0,
         )
 
-        download_icon = ctk.CTkImage(
-            dark_image=Image.open(Path("assets/download-icon.png"))
+        self.__sidebar_button(
+            Path("assets/download-icon.png"),
+            lambda: self.__action_page_change("DownloadedModsPage"),
         )
-        downloads_btn = ctk.CTkButton(
-            self,
-            image=download_icon,
-            text="",
-            fg_color=palette.BUTTON_BG_GRAY,
-            hover_color=palette.DIM_BEIGE,
-            width=50,
-            height=50,
-            command=lambda: self.action_page_change("DownloadedModsPage"),
-        )
-        downloads_btn.place(x=10, y=50)
-        downloads_btn.pack(padx=10, pady=10)
-        downloads_btn.bind("<Button-1>", lambda x: self.focus())
 
-        import_icon = ctk.CTkImage(dark_image=Image.open(Path("assets/banana.png")))
-        import_btn = ctk.CTkButton(
-            self,
-            image=import_icon,
-            text="",
-            fg_color=palette.BUTTON_BG_GRAY,
-            hover_color=palette.DIM_BEIGE,
-            width=50,
-            height=50,
-            command=lambda: self.action_page_change("ImportModsPage"),
+        self.__sidebar_button(
+            Path("assets/banana.png"),
+            lambda: self.__action_page_change("ImportModsPage"),
         )
-        import_btn.place(x=10, y=100)
-        import_btn.pack(padx=10, pady=10)
-        import_btn.bind("<Button-1>", lambda x: self.focus())
 
         self.bind("<Button-1>", lambda x: self.focus())
 
     def page_pack(self):
-        self.pack(anchor="nw", fill=ctk.BOTH, side=ctk.LEFT)
+        self.pack(anchor="w", fill=ctk.BOTH, side=ctk.LEFT)
 
     def page_forget(self):
         self.page_forget()
 
-    def action_page_change(self, page_name: str):
+    def __action_page_change(self, page_name: str):
         SideBar.page_change_event.trigger("page_change", page_name)
+
+    def __sidebar_button(self, image_path: Path, action: Callable, above=True):
+        btn_icon = ctk.CTkImage(dark_image=Image.open(image_path))
+        btn = ctk.CTkButton(
+            self,
+            image=btn_icon,
+            text="",
+            fg_color=palette.BUTTON_BACKGROUND,
+            hover_color=palette.DIM_BEIGE,
+            width=50,
+            height=50,
+            command=action,
+        )
+        btn.place(x=100)
+        btn.pack(padx=10, pady=10, side=ctk.TOP if above else ctk.BOTTOM)
+        btn.bind("<Button-1>", lambda x: self.focus())

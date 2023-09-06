@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Iterable
 
 __WIN_WIDTH = 1200
-__WIN_HEIGHT = 600
+__WIN_HEIGHT = 599
 
 
 def get_window_size():

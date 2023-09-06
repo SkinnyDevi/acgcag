@@ -21,8 +21,8 @@ class ModItemFrame(ManagerPageFrame):
             width=365,
             height=180,
             border_width=2,
-            border_color=palette.BUTTON_BG_GRAY,
-            fg_color=palette.LESSER_GRAY,
+            border_color=palette.MAIN_BEIGE,
+            fg_color=palette.VARIANT_GRAY,
         )
         self.propagate(False)
         self._mod = mod
@@ -67,7 +67,8 @@ class ModItemFrame(ManagerPageFrame):
                 info_frame,
                 text="Manage",
                 font=palette.APP_FONT(14),
-                fg_color=palette.BUTTON_BG_GRAY,
+                fg_color=palette.BUTTON_BACKGROUND,
+                text_color=palette.TEXT_COLOR_DARK,
                 hover_color=palette.DIM_BEIGE,
                 command=self._on_manager,
             )
