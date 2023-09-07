@@ -45,6 +45,16 @@ press F10 to refresh all active skins.
 ## Uninstalling ACGCAG and GIMI
 Simply move to trash/recycling bin. That's it!
 
+## Changelog [1.0.1]
+<details>
+<summary>Click here to display version update features</summary>
+		
+		## [1.0.1]
+		Fixes:
+		* Fixed an issue that caused download fields to accumulate if Finish button was not pressed
+
+</details>
+
 ## App screenshots
 ### ACGCAG Setup Screen
 ![setup-screen](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/setup-screen.png)
