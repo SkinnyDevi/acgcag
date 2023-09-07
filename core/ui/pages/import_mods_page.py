@@ -1,5 +1,6 @@
 import threading
 import customtkinter as ctk
+from observable import Observable
 
 import core.utils as utils
 import core.ui.palette as palette
@@ -11,6 +12,8 @@ from core.ui.components.download_field import DownloadField
 
 
 class ImportModsPage(ManagerPageFrame):
+    search_btn_obs = Observable()
+
     def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
         self.__search_thread = None
@@ -67,6 +70,14 @@ class ImportModsPage(ManagerPageFrame):
         self.__search_btn.pack()
         self.__search_btn.bind("<Button-1>", lambda x: self.focus())
 
+        ImportModsPage.search_btn_obs.on(
+            "state_change", lambda x: self.__search_btn_state(x)
+        )
+
+    def __search_btn_state(self, state: bool):
+        change = "normal" if state else "disabled"
+        self.__search_btn.configure(state=change)
+
     def __mod_info(self):
         self.__mod_info_frame = UIModInfoFrame(self)
         self.__download_opts_frame = UIDownloadOptionsFrame(self, self.app_root)
@@ -109,6 +120,7 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
     def __init__(self, parent: ctk.CTkFrame, root: ctk.CTk):
         super().__init__(parent, fg_color=palette.MAIN_GRAY)
         self.root = root
+        self.__dl_bar: DownloadField = None
 
         ui_helpers.frame_text(self, "Available Downloads", 16).pack()
 
@@ -124,6 +136,7 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
         self.destroy_frames()
         self.forget()
         self.__finish_btn.forget()
+        self.__finish_btn.configure(text="Clear Search", command=self.page_forget)
 
     def set_mod(self, mod: ModPost):
         downloads = mod.downloads
@@ -132,6 +145,9 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
             self.__fields.append(frame)
 
     def destroy_frames(self):
+        if self.__dl_bar is not None:
+            self.__dl_bar.destroy()
+
         for f in self.__fields:
             f.destroy()
 
@@ -173,23 +189,27 @@ class UIDownloadOptionsFrame(ctk.CTkFrame):
         thread.start()
 
     def __download_file(self, download: ModPost.Download):
-        dl_bar = DownloadField(self, self.root, download.file_name, download.download)
-        download.dl_obs.on("mod_chunk_update", dl_bar.update_progress)
-        download.dl_obs.on("mod_dl_complete", lambda x: dl_bar.complete())
+        ImportModsPage.search_btn_obs.trigger("state_change", False)
+        self.__dl_bar = DownloadField(
+            self, self.root, download.file_name, download.download
+        )
+        download.dl_obs.on("mod_chunk_update", self.__dl_bar.update_progress)
+        download.dl_obs.on("mod_dl_complete", lambda x: self.__dl_bar.complete())
 
         for f in self.__fields:
             f.forget()
         self.__finish_btn.forget()
 
-        utils.pack_and_wait(dl_bar)
-        dl_bar.exec_download()
+        utils.pack_and_wait(self.__dl_bar)
+        self.__dl_bar.exec_download()
 
         def finish():
             self.page_forget()
-            dl_bar.forget()
+            self.__dl_bar.forget()
 
         self.__finish_btn.configure(text="Finish", command=finish)
         self.__finish_btn.pack(pady=5)
+        ImportModsPage.search_btn_obs.trigger("state_change", True)
 
     def __finish(self):
         self.__finish_btn = ctk.CTkButton(
