@@ -58,4 +58,6 @@ Simply move to trash/recycling bin. That's it!
 ### Launching GIMI
 ![skin-manage-screen](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/gimi-launched-screen.png)
 
-Thank you for stopping by!
+**Disclaimer: This app is not affiliated in any way, shape or form with HoYoverse, COGNOSPHERE or Genshin Impact.**
+
+## Thank you for stopping by!
