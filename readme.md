@@ -6,6 +6,9 @@ Links to the original program, as without this, ACGCAG wouldn't not exist nor wo
 - [GIMI](https://github.com/SilentNightSound/GI-Model-Importer)
 
 ## How to install
+**Pre-requisites: Have installed in your computer a unpacking program, most commonly: WinRAR or 7zip.**
+WinRAR has been tested to work with the app.
+
 1. Go to the `Releases` section of this page and download the latest version of `ACGCAG-Launcher.zip`
 2. Once downloaded, extract the zip file anywhere you plan on using this app.
 3. Make sure you read the documents inside the zip file (especially the `INSTALL_GUIDE.txt`).
