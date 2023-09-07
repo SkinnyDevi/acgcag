@@ -49,9 +49,9 @@ Simply move to trash/recycling bin. That's it!
 <details>
 <summary>Click here to display version update features</summary>
 		
-		## [1.0.1]
-		Fixes:
-		* Fixed an issue that caused download fields to accumulate if Finish button was not pressed
+## [1.0.1]
+Fixes:
+* Fixed an issue that caused download fields to accumulate if Finish button was not pressed
 
 </details>
 
