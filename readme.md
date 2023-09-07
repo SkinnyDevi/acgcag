@@ -68,7 +68,7 @@ Fixes:
 ![downloaded-skins](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/downloaded-screen.png)
 
 ### Managing downloaded skins
-![skin-manage-screen](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/downloaded-screen.png)
+![skin-manage-screen](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/skin-manage-screen.png)
 
 ### Launching GIMI
 ![skin-manage-screen](https://raw.githubusercontent.com/SkinnyDevi/acgcag/master/docs/gimi-launched-screen.png)
