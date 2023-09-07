@@ -22,7 +22,7 @@ else:
 
 debug = False
 is_console = "console" if debug else "windowed"
-build_cmd = f"""pyinstaller --noconfirm --onedir --{is_console} --icon "assets/app.ico" --name "ACGCAG" --clean --add-data ".venv/Lib/site-packages/customtkinter;customtkinter/" --add-data "assets;assets/" --add-data "LICENSE;."  "main.py" """
+build_cmd = f"""pyinstaller --noconfirm --onedir --{is_console} --icon "assets/app.ico" --name "ACGCAG" --clean --additional-hooks-dir "build-hooks" --add-data ".venv/Lib/site-packages/customtkinter;customtkinter/" --add-data "assets;assets/" --add-data "LICENSE;."  "main.py" """
 
 subprocess.run(build_cmd)
 
